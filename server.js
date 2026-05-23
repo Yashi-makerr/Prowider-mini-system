@@ -4,30 +4,36 @@ const next = require("next");
 
 const { Server } = require("socket.io");
 
-const dev =
-  process.env.NODE_ENV !== "production";
+const dev = process.env.NODE_ENV !== "production";
 
-const app = next({ dev });
+const hostname = "0.0.0.0";
+
+const port = process.env.PORT || 3000;
+
+const app = next({
+  dev,
+  hostname,
+  port,
+});
 
 const handle = app.getRequestHandler();
 
 app.prepare().then(() => {
 
-  const httpServer =
-    createServer((req, res) => {
-
+  const httpServer = createServer(
+    (req, res) => {
       handle(req, res);
-
-    });
+    }
+  );
 
   const io = new Server(httpServer, {
-
     cors: {
       origin: "*",
     },
   });
 
   global.io = io;
+
   io.on("connection", (socket) => {
 
     console.log(
@@ -41,15 +47,13 @@ app.prepare().then(() => {
         "Socket disconnected:",
         socket.id
       );
-
     });
   });
 
-  httpServer.listen(3000, () => {
+  httpServer.listen(port, hostname, () => {
 
     console.log(
-      "Server running on port 3000"
+      `Server ready on http://${hostname}:${port}`
     );
-
   });
 });
