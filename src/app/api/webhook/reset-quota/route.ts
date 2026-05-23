@@ -14,17 +14,14 @@ export async function POST() {
 
     await connectDB();
 
-
-
     const webhookId =
-      "payment_success_001";
-
+   `payment_${Date.now()}`;
 
 
     // IDEMPOTENCY CHECK
     const alreadyProcessed =
       await WebhookEvent.findOne({
-        eventId: webhookId,
+      webhookId,
       });
 
 
@@ -42,8 +39,8 @@ export async function POST() {
 
     // SAVE WEBHOOK EVENT
     await WebhookEvent.create({
-      eventId: webhookId,
-      eventType: "quota_reset",
+    webhookId,
+    eventType: "quota_reset",
     });
 
 
