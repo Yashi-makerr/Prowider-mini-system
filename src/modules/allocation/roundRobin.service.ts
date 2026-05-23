@@ -81,21 +81,12 @@ export async function getNextRoundRobinProviders(
   if (filteredProviders.length === 0) {
     return [];
   }
-
-
-
-  const selectedProviders = [];
-
-
+  const selectedProviders: any[] = [];
 
   let currentIndex =
     allocationState.lastAssignedIndex;
 
-
-
   let checked = 0;
-
-
 
   while (
     selectedProviders.length < requiredCount &&
