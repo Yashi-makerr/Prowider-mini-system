@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 
 import io from "socket.io-client";
 
-const socket = io("http://localhost:3000");
+const socket = io();
 
 export default function DashboardPage() {
   const [providers, setProviders] = useState<any[]>([]);
@@ -39,7 +39,7 @@ export default function DashboardPage() {
               Provider Dashboard
             </h1>
 
-            <p className="text-gray-600 mt-2">
+            <p className="text-gray-800 mt-2">
               Real-time provider lead distribution overview.
             </p>
           </div>
@@ -77,7 +77,7 @@ export default function DashboardPage() {
                 <div className="mt-6">
 
                   <div className="flex justify-between text-sm mb-2">
-                    <span className="text-gray-600">
+                    <span className="text-gray-800">
                       Quota Usage
                     </span>
 
@@ -98,7 +98,7 @@ export default function DashboardPage() {
                   </div>
 
                   <div className="mt-3 flex justify-between text-sm">
-                    <span className="text-gray-500">
+                    <span className="text-gray-800">
                       Remaining Quota
                     </span>
 
@@ -110,14 +110,14 @@ export default function DashboardPage() {
 
                 <div className="mt-8">
 
-                  <h3 className="font-semibold text-lg mb-4">
+                  <h3 className="font-semibold text-lg mb-4 text-black">
                     Assigned Leads
                   </h3>
 
                   <div className="space-y-3 max-h-72 overflow-y-auto pr-1">
 
                     {provider.assignedLeads.length === 0 && (
-                      <div className="text-sm text-gray-500 border rounded-xl p-4">
+                      <div className="text-sm text-gray-800 border rounded-xl p-4">
                         No leads assigned yet.
                       </div>
                     )}
@@ -146,14 +146,14 @@ export default function DashboardPage() {
                             </span>
                           </div>
 
-                          <p className="text-sm text-gray-600 mt-2">
+                          <p className="text-sm text-gray-800 mt-2">
                             {
                               assignment.leadId
                                 ?.phone
                             }
                           </p>
 
-                          <p className="text-sm text-gray-500">
+                          <p className="text-sm text-gray-800">
                             {
                               assignment.leadId
                                 ?.city
