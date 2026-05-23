@@ -1,20 +1,14 @@
-import { NextRequest,
-         NextResponse }
-from "next/server";
+import { NextResponse } from "next/server";
 
-import { connectDB }
-from "@/lib/db";
+import Provider from "@/models/Provider";
 
-import {
-  processQuotaResetWebhook
-}
-from "@/modules/webhook/webhook.service";
+import WebhookEvent from "@/models/WebhookEvent";
+
+import { connectDB } from "@/lib/db";
 
 
 
-export async function POST(
-  req: NextRequest
-) {
+export async function POST() {
 
   try {
 
@@ -22,49 +16,76 @@ export async function POST(
 
 
 
-    const body =
-      await req.json();
+    const webhookId =
+      "payment_success_001";
 
 
 
-    const { eventId } = body;
+    // IDEMPOTENCY CHECK
+    const alreadyProcessed =
+      await WebhookEvent.findOne({
+        webhookId,
+      });
 
 
 
-    if (!eventId) {
+    if (alreadyProcessed) {
 
-      return NextResponse.json(
-        {
-          success: false,
-          message:
-            "eventId required",
+      return NextResponse.json({
+        success: true,
+        message:
+          "Webhook already processed",
+      });
+    }
+
+
+
+    // SAVE WEBHOOK EVENT
+    await WebhookEvent.create({
+      webhookId,
+      eventType: "quota_reset",
+    });
+
+
+
+    // RESET ALL PROVIDER QUOTAS
+    await Provider.updateMany(
+      {},
+      {
+        $set: {
+          usedQuota: 0,
         },
-        { status: 400 }
+      }
+    );
+
+
+
+    // REALTIME UPDATE
+    if (global.io) {
+
+      global.io.emit(
+        "quota-reset"
       );
     }
 
 
 
-    const result =
-      await processQuotaResetWebhook(
-        eventId
-      );
-
-
-
-    return NextResponse.json(
-      result
-    );
+    return NextResponse.json({
+      success: true,
+      message:
+        "All quotas reset successfully",
+    });
 
   } catch (error: any) {
 
     return NextResponse.json(
       {
         success: false,
-        message:
-          error.message,
+        message: error.message,
       },
-      { status: 500 }
+      {
+        status: 500,
+      }
     );
   }
 }
