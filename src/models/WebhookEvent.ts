@@ -1,22 +1,31 @@
-import mongoose, { Schema, Document, models, model } from "mongoose";
+import mongoose, {
+  Document,
+} from "mongoose";
 
-export interface IWebhookEvent extends Document {
-  eventId: string;
-  processedAt: Date;
+export interface IWebhookEvent
+  extends Document {
+
+  webhookId: string;
+
+  eventType: string;
+
+  createdAt: Date;
+
+  updatedAt: Date;
 }
 
-const WebhookEventSchema =
-  new Schema<IWebhookEvent>(
+const webhookEventSchema =
+  new mongoose.Schema(
     {
-      eventId: {
+      webhookId: {
         type: String,
         required: true,
         unique: true,
       },
 
-      processedAt: {
-        type: Date,
-        default: Date.now,
+      eventType: {
+        type: String,
+        required: true,
       },
     },
     {
@@ -24,11 +33,9 @@ const WebhookEventSchema =
     }
   );
 
-const WebhookEvent =
-  models.WebhookEvent ||
-  model<IWebhookEvent>(
+export default
+  mongoose.models.WebhookEvent ||
+  mongoose.model(
     "WebhookEvent",
-    WebhookEventSchema
+    webhookEventSchema
   );
-
-export default WebhookEvent;

@@ -24,7 +24,7 @@ export async function POST() {
     // IDEMPOTENCY CHECK
     const alreadyProcessed =
       await WebhookEvent.findOne({
-        webhookId,
+        eventId: webhookId,
       });
 
 
@@ -42,7 +42,7 @@ export async function POST() {
 
     // SAVE WEBHOOK EVENT
     await WebhookEvent.create({
-      webhookId,
+      eventId: webhookId,
       eventType: "quota_reset",
     });
 
@@ -67,8 +67,6 @@ export async function POST() {
         "quota-reset"
       );
     }
-
-
 
     return NextResponse.json({
       success: true,
